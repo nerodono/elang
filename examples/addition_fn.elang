@@ -1,0 +1,7 @@
+let add2 x y =
+    ( let result = x + y
+      in result )
+in
+    ( add2 2 2 )
+
+

@@ -13,6 +13,8 @@ class Precedence obj where
 data Keyword = If
              | Else
              | Then
+             | Let
+             | In
              deriving(Show)
 
 data Operator = Add
@@ -31,6 +33,7 @@ data Token = Ident String
            | Lit Lit
            | Op Operator
            | Keyword Keyword
+           | Bracket { isOpen :: Bool }
            deriving(Show)
 
 instance Precedence Operator where

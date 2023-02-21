@@ -15,9 +15,13 @@ tokenize (c:sTail)
   | isOperator c = continue $ parseOperator original
   | isStrLitStart c = continue $ parseStrLit sTail
   | isIdentChar c = continue $ mapFst postProcessIdent $ parseIdent original
+  | isBracket c = continue $ parseBracket original
   | otherwise = undefined
   where
     original = c : sTail
+
+    isBracket :: Char -> Bool
+    isBracket = flip elem "()"
 
     isIdentChar :: Char -> Bool
     isIdentChar = flip elem $
@@ -41,8 +45,14 @@ tokenize (c:sTail)
         "if" -> Keyword If
         "else" -> Keyword Else
         "then" -> Keyword Then
+        "let"  -> Keyword Let
+        "in"   -> Keyword In
+
         ident -> Ident ident
     postProcessIdent _ = undefined
+
+    parseBracket :: String -> (Token, String)
+    parseBracket (x:xs) = (Bracket { isOpen = (x == '(') }, xs)
 
     parseIdent :: String -> (Token, String)
     parseIdent = mapFst Ident . span isIdentChar

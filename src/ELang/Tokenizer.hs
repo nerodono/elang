@@ -1,11 +1,11 @@
-module Tokenizer (tokenize) where
+module ELang.Tokenizer (tokenize) where
 
-import Token ( Token(..)
-             , Lit(..)
-             , Operator(..)
-             , Keyword(..)
-             )
-import Utils (mapFst, mapSnd)
+import ELang.Token ( Token(..)
+                   , Lit(..)
+                   , Operator(..)
+                   , Keyword(..)
+                   )
+import ELang.Utils (mapFst, mapSnd)
 
 tokenize :: String -> [Token]
 tokenize "" = []

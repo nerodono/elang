@@ -1,15 +1,12 @@
-{-# OPTIONS_GHC -Wno-partial-fields #-}
-{-# LANGUAGE NamedFieldPuns #-}
-
-module LangExpr
+module ELang.LangExpr
 ( Expr(..)
 , eval
 , EvalResult(..) )
 where
 
-import Token ( Operator(..)
-             , Lit(..)
-             )
+import ELang.Token ( Operator(..)
+                   , Lit(..)
+                   )
 
 data EvalResult = IntResult Integer
                 | StrResult String

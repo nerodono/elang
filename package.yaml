@@ -30,11 +30,13 @@ ghc-options:
 - -Wincomplete-uni-patterns
 - -Wmissing-export-lists
 - -Wmissing-home-modules
-- -Wpartial-fields
+- -Wno-partial-fields
 - -Wredundant-constraints
 
 library:
   source-dirs: src
+  default-extensions:
+    - NamedFieldPuns
 
 executables:
   elang-exe:

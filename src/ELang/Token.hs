@@ -1,4 +1,4 @@
-module Token
+module ELang.Token
 ( Lit(..)
 , Token(..)
 , Operator(..)

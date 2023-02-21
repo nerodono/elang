@@ -1,4 +1,4 @@
-module Utils
+module ELang.Utils
 ( mapFst
 , mapSnd
 )

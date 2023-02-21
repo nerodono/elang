@@ -1,8 +1,6 @@
 module Main (main) where
 
-import LangExpr (eval, Expr(..))
-import Tokenizer (tokenize)
-import Token
+import ELang.Tokenizer (tokenize)
 
 main :: IO ()
 main =

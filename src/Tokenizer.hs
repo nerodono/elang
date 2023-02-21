@@ -1,6 +1,10 @@
 module Tokenizer (tokenize) where
 
-import Token (Token(..), Lit(..), Operator(..))
+import Token ( Token(..)
+             , Lit(..)
+             , Operator(..)
+             , Keyword(..)
+             )
 import Utils (mapFst, mapSnd)
 
 tokenize :: String -> [Token]
@@ -10,9 +14,14 @@ tokenize (c:sTail)
   | isSkipCharacter c = tokenize sTail
   | isOperator c = continue $ parseOperator original
   | isStrLitStart c = continue $ parseStrLit sTail
+  | isIdentChar c = continue $ mapFst postProcessIdent $ parseIdent original
   | otherwise = undefined
   where
     original = c : sTail
+
+    isIdentChar :: Char -> Bool
+    isIdentChar = flip elem $
+      ['A'..'Z'] ++ ['a'..'z'] ++ ['0'..'9'] ++ "_'!"
 
     isStrLitStart :: Char -> Bool
     isStrLitStart = (== '"')
@@ -26,6 +35,18 @@ tokenize (c:sTail)
     isOperator :: Char -> Bool
     isOperator = flip elem "+-=/*"
 
+    postProcessIdent :: Token -> Token
+    postProcessIdent (Ident strIdent) =
+      case strIdent of
+        "if" -> Keyword If
+        "else" -> Keyword Else
+        "then" -> Keyword Then
+        ident -> Ident ident
+    postProcessIdent _ = undefined
+
+    parseIdent :: String -> (Token, String)
+    parseIdent = mapFst Ident . span isIdentChar
+
     parseStrLit :: String -> (Token, String)
     parseStrLit s = mapSnd tail $ mapFst (Lit . StrLit) $ break isStrLitStart s
 
@@ -37,7 +58,7 @@ tokenize (c:sTail)
                         '-' -> Sub
                         '*' -> Mul
                         '/' -> Div
-                        '=' -> Assign
+                        '=' -> Equal
                         _ -> undefined
       in (token, opTail)
 

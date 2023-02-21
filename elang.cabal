@@ -25,9 +25,11 @@ source-repository head
 
 library
   exposed-modules:
+      LangExpr
       Lib
       Token
       Tokenizer
+      Utils
   other-modules:
       Paths_elang
   hs-source-dirs:

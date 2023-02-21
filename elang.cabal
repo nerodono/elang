@@ -25,7 +25,11 @@ source-repository head
 
 library
   exposed-modules:
-      ELang.LangExpr
+      ELang.BindContext
+      ELang.Eval
+      ELang.Expr
+      ELang.Parser
+      ELang.Prelude
       ELang.Token
       ELang.Tokenizer
       ELang.Utils

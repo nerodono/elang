@@ -1,51 +1,55 @@
-module ELang.LangExpr
+module ELang.Eval
 ( Expr(..)
 , eval
 , EvalResult(..) )
 where
 
-import ELang.Token ( Operator(..)
-                   , Lit(..)
-                   )
+import ELang.Expr ( EvalResult(..), Expr(..) )
+import ELang.Token ( Lit(..), Operator(..) )
+import ELang.BindContext
 
-data EvalResult = IntResult Integer
-                | StrResult String
-                | BoolResult Bool
-                deriving(Show, Eq)
-
-data Expr = Binary Expr Expr Operator
-          | Unary Expr Operator
-          | ExprLit Lit
-          | ExprIf { ifCond :: Expr
-                   , trueExpr :: Expr
-                   , falseExpr :: Expr
-                   }
-          deriving(Show)
-
-eval :: Expr -> EvalResult
-eval (ExprLit lit) =
+eval :: BindContext -> Expr -> EvalResult
+eval _ (ExprLit lit) =
   case lit of
     IntLit  i -> IntResult i
     StrLit  s -> StrResult s
     BoolLit b -> BoolResult b
 
-eval ExprIf { ifCond, trueExpr, falseExpr } =
-  case eval ifCond of
+eval ctx (ExprIdent ident) =
+  case findItemByName ctx ident of
+    Just item ->
+      case item of
+        Function { fnBody, fnArgs } ->
+          -- TODO: Implement function application
+          undefined
+        NameBinding { value } ->
+          eval ctx value
+    Nothing   -> error $ "Undefined binding " ++ ident
+
+eval ctx ExprPlainLet { binding, bindExpr, contextExpr } =
+  let contextItem = NameBinding { value = bindExpr }
+      newBinding  = Binding { name = binding, item = contextItem }
+      newContext  = withNewBinding ctx newBinding
+  in
+    eval newContext contextExpr
+
+eval ctx ExprIf { ifCond, trueExpr, falseExpr } =
+  case eval ctx ifCond of
     BoolResult True  -> true
     BoolResult False -> false
     StrResult  s     -> if null s then false else true
     IntResult  i     -> if i == 0 then false else true
   where
-    true = eval trueExpr
-    false = eval falseExpr
+    true = eval ctx trueExpr
+    false = eval ctx falseExpr
 
-eval (Unary lhs op) =
+eval ctx (Unary lhs op) =
   let fn = case op of
             Add -> id
             Sub -> neg
             _   -> undefined
   in
-    fn (eval lhs)
+    fn (eval ctx lhs)
   where
     neg :: EvalResult -> EvalResult
     neg (BoolResult bLhs) =
@@ -55,7 +59,7 @@ eval (Unary lhs op) =
       IntResult $ -iLhs
     neg _ = undefined
 
-eval (Binary lhs rhs op) =
+eval ctx (Binary lhs rhs op) =
   let fn = case op of
             Add    -> add
             Sub    -> sub
@@ -63,7 +67,7 @@ eval (Binary lhs rhs op) =
             Div    -> fdiv
             Equal  -> equal
   in
-    fn (eval lhs) (eval rhs)
+    fn (eval ctx lhs) (eval ctx rhs)
   where
     -- equal
     equal :: EvalResult -> EvalResult -> EvalResult
@@ -104,4 +108,4 @@ eval (Binary lhs rhs op) =
       BoolResult $ bLhs || bRhs
     add _ _ = undefined
 
-eval _ = undefined
+eval _ _ = undefined

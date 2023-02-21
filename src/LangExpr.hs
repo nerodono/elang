@@ -20,9 +20,9 @@ data Expr = Binary Expr Expr Operator
           | Unary Expr Operator
           | ExprLit Lit
           | ExprIf { ifCond :: Expr
-               , trueExpr :: Expr
-               , falseExpr :: Expr
-               }
+                   , trueExpr :: Expr
+                   , falseExpr :: Expr
+                   }
           deriving(Show)
 
 eval :: Expr -> EvalResult

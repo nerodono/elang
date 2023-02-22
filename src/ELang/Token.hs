@@ -25,9 +25,9 @@ data Operator = Add
               deriving(Show)
 
 data Lit = StrLit String
-          | IntLit Integer
-          | BoolLit Bool
-          deriving(Show)
+         | IntLit Integer
+         | BoolLit Bool
+         deriving(Show)
 
 data Token = Ident String
            | Lit Lit

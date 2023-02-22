@@ -15,6 +15,7 @@ parseTokens :: [Token] -> Maybe Expr
 parseTokens [] = Nothing
 parseTokens (token:tTail) =
   case token of
+    Op operator -> Just $ parseUnary operator tTail
     -- TODO: Implement non-keyword expression parsing
     Keyword kw -> Just $
       ( case kw of
@@ -23,6 +24,13 @@ parseTokens (token:tTail) =
          _ -> undefined ) tTail
     _ -> undefined
   where
+    -- Unary operations
+    parseUnary :: Operator -> [Token] -> Expr
+    parseUnary op (firstToken:tailTokens) =
+      case firstToken of
+        Lit (IntLit int) -> undefined
+        _ -> undefined
+
     -- If
     parseIf :: [Token] -> Expr
     parseIf ifTokens =

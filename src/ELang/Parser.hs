@@ -6,10 +6,16 @@ import ELang.Eval (Expr(..))
 import ELang.Token
 import ELang.Utils ( mapSnd )
 
+import Data.Maybe (fromMaybe)
+
+unwrapMaybe :: Maybe a -> a
+unwrapMaybe = fromMaybe undefined
+
 parseTokens :: [Token] -> Maybe Expr
-parseTokens [] = undefined
+parseTokens [] = Nothing
 parseTokens (token:tTail) =
   case token of
+    -- TODO: Implement non-keyword expression parsing
     Keyword kw -> Just $
       ( case kw of
          If  -> parseIf
@@ -19,25 +25,43 @@ parseTokens (token:tTail) =
   where
     -- If
     parseIf :: [Token] -> Expr
-    parseIf [] = error "Empty if branch"
-    parseIf (token:ifTail) = undefined
+    parseIf ifTokens =
+      let (condition, afterThen) = mapSnd tail $ span isNotThen ifTokens
+          (ifTrue, ifFalse)      = mapSnd tail $ span isNotElse afterThen
+      in
+        ExprIf { ifCond    = unwrapMaybe $ parseTokens condition
+               , trueExpr  = unwrapMaybe $ parseTokens ifTrue
+               , falseExpr = unwrapMaybe $ parseTokens ifFalse
+               }
+      where
+        isNotElse :: Token -> Bool
+        isNotElse (Keyword Else) = False
+        isNotElse _ = True
+
+        isNotThen :: Token -> Bool
+        isNotThen (Keyword Then) = False
+        isNotThen _ = True
 
     -- Let
     parseLet :: [Token] -> Expr
     parseLet [] = error "Empty let binding"
-    parseLet (token:letTail) =
-      case token of
+    parseLet (nextToken:letTail) =
+      case nextToken of
         Ident ident ->
           case letTail of
             (Op Equal : bindingTail) ->
               let (tokensBefore, tokensAfter) =
                     mapSnd tail $ span isNotKwIn bindingTail
-              in undefined
-            args -> undefined
+              in
+                ExprPlainLet { binding = ident
+                             , bindExpr = unwrapMaybe    $ parseTokens tokensBefore
+                             , contextExpr = unwrapMaybe $ parseTokens tokensAfter
+                             }
+            args ->
+              -- TODO: Implement function binding
+              undefined
         tok         -> error $ "Unexpected token: " ++ show tok ++ ", expected identifier"
       where
         isNotKwIn :: Token -> Bool
         isNotKwIn (Keyword In) = False
         isNotKwIn _            = True
-
-

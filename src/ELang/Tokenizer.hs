@@ -42,17 +42,20 @@ tokenize (c:sTail)
     postProcessIdent :: Token -> Token
     postProcessIdent (Ident strIdent) =
       case strIdent of
-        "if" -> Keyword If
-        "else" -> Keyword Else
-        "then" -> Keyword Then
-        "let"  -> Keyword Let
-        "in"   -> Keyword In
+        "true"  -> Lit $ BoolLit True
+        "false" -> Lit $ BoolLit False
+        "if"    -> Keyword If
+        "else"  -> Keyword Else
+        "then"  -> Keyword Then
+        "let"   -> Keyword Let
+        "in"    -> Keyword In
 
         ident -> Ident ident
     postProcessIdent _ = undefined
 
     parseBracket :: String -> (Token, String)
-    parseBracket (x:xs) = (Bracket { isOpen = (x == '(') }, xs)
+    parseBracket "" = undefined
+    parseBracket (x:xs) = (Bracket { isOpen = x == '(' }, xs)
 
     parseIdent :: String -> (Token, String)
     parseIdent = mapFst Ident . span isIdentChar

@@ -22,7 +22,9 @@ data ContextItem = Function { fnBody :: Expr
 data Binding = Binding { name :: String
                        , item :: ContextItem
                        }
+               deriving(Show)
 newtype BindContext = BindContext [Binding]
+                    deriving(Show)
 
 class ToBinding a where
   convertToBinding :: a -> Binding

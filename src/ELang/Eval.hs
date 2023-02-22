@@ -15,6 +15,9 @@ eval _ (ExprLit lit) =
     StrLit  s -> StrResult s
     BoolLit b -> BoolResult b
 
+eval ctx (BracketsExpr e) =
+  eval ctx e
+
 eval ctx (ExprIdent ident) =
   case findItemByName ctx ident of
     Just item ->

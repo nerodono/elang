@@ -8,13 +8,13 @@ import ELang.Token ( Operator(..)
                    , Lit(..)
                    )
 
-
 data EvalResult = IntResult Integer
                 | StrResult String
                 | BoolResult Bool
                 deriving(Show, Eq)
 
 data Expr = Binary Expr Expr Operator
+          | BracketsExpr Expr
           | ExprIdent String
           | Unary Expr Operator
           | ExprLit Lit

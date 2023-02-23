@@ -4,7 +4,7 @@ where
 
 import ELang.Token
 import ELang.Expr (Expr(..), sortByPrecedences)
-import ELang.Utils ( mapFst )
+import ELang.Utils ( mapFst, mapSnd )
 import ELang.PredicateStack
 
 import Data.Maybe (fromMaybe)
@@ -49,8 +49,7 @@ parseTokens tokens =
                 Let ->
                   case tokTail of
                     (Ident name : Op Equal : opTail) ->
-                      let untilInKw = pushToTop stack (isKeyword In)
-                          (bindExpr, boundToTokens) = mapFst unwrapMaybe $ parse Nothing untilInKw opTail
+                      let (bindExpr, boundToTokens) = mapFst unwrapMaybe $ parse Nothing (untilInKw stack) opTail
                           (contextExpr, tail') = mapFst unwrapMaybe $ parse Nothing stack boundToTokens
                       in
                         result tail' $ ExprPlainLet { binding = name
@@ -58,7 +57,16 @@ parseTokens tokens =
                                                     , contextExpr
                                                     }
                     (Ident name : Ident argument : funcTail) ->
-                      undefined
+                      let (args, defTokens)         = mapSnd tail $ break isEq' funcTail
+                          (bindExpr, boundToTokens) = mapFst unwrapMaybe $ parse Nothing (untilInKw stack)
+                                                                         defTokens
+                          (contextExpr, tail')      = mapFst unwrapMaybe $ parse Nothing stack boundToTokens
+                      in
+                        result tail' $ ExprFuncBind { fnName = name
+                                                    , arguments = argument : map extractIdent args
+                                                    , bodyExpr = bindExpr
+                                                    , contextExpr
+                                                    }
                     t ->
                       error $ "Malformed let in expression, tail: " ++ show t
                 _ -> error $ "Unexpected keyword " ++ show keyword ++ ", tail: " ++ show tokTail
@@ -83,6 +91,21 @@ parseTokens tokens =
           (maybeLhs, tokTail)
       where
         -- Utilities
+
+        extractIdent :: Token -> String
+        extractIdent (Ident ident) = ident
+        extractIdent _ = undefined
+
+        untilInKw :: PredicateStack -> PredicateStack
+        untilInKw = flip pushToTop (isKeyword In)
+
+        isEq' :: Token -> Bool
+        isEq' token =
+          case token of
+            Op Equal -> True
+            Ident _  -> False
+            tk ->
+              error $ "Unexpected argument token: " ++ show tk
 
         result :: [Token] -> Expr -> (Maybe Expr, [Token])
         result tail' expr =

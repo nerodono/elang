@@ -23,6 +23,11 @@ data Expr = Binary Expr Expr Operator
                          , bindExpr :: Expr
                          , contextExpr :: Expr
                          }
+          | ExprFuncBind { fnName :: String
+                         , bodyExpr :: Expr
+                         , contextExpr :: Expr
+                         , arguments :: [String]
+                         }
           | ExprIf { ifCond :: Expr
                    , trueExpr :: Expr
                    , falseExpr :: Expr

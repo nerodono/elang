@@ -11,7 +11,7 @@ import Data.Maybe (fromMaybe)
 
 main :: IO ()
 main =
-  readFile "examples/test.elang" >>= handle
+  readFile "examples/addition_fn.elang" >>= handle
   where
     handle :: String -> IO ()
     handle contents = do

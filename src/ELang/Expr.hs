@@ -12,7 +12,7 @@ import ELang.Token ( Operator(..)
 data EvalResult = IntResult Integer
                 | StrResult String
                 | BoolResult Bool
-                deriving(Show, Eq)
+                deriving(Eq)
 
 data Expr = Binary Expr Expr Operator
           | ExprStringify Expr
@@ -34,6 +34,11 @@ data Expr = Binary Expr Expr Operator
                    , falseExpr :: Expr
                    }
           deriving(Show)
+
+instance Show EvalResult where
+  show (IntResult  i) = show i
+  show (BoolResult b) = show b
+  show (StrResult  s) = show s
 
 sortByPrecedences :: Expr -> Expr
 sortByPrecedences = id

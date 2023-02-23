@@ -1,3 +1,7 @@
 let a = 3 in
 let b = 4 in
-stringify ((a*a) + (b*b)) + ", world"
+let c = (a*a) + (b*b) in
+    if c = 25 then
+        stringify(true) + ", you're fucking right"
+    else
+        stringify(false)

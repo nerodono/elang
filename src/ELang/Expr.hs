@@ -1,6 +1,7 @@
 module ELang.Expr
 ( EvalResult(..)
 , Expr(..)
+, sortByPrecedences
 )
 where
 
@@ -27,3 +28,7 @@ data Expr = Binary Expr Expr Operator
                    , falseExpr :: Expr
                    }
           deriving(Show)
+
+sortByPrecedences :: Expr -> Expr
+sortByPrecedences = id
+

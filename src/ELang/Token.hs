@@ -3,7 +3,7 @@ module ELang.Token
 , Token(..)
 , Operator(..)
 , Keyword(..)
-, precedenceOf
+, Precedence(..)
 )
 where
 
@@ -15,7 +15,7 @@ data Keyword = If
              | Then
              | Let
              | In
-             deriving(Show)
+             deriving(Show, Eq)
 
 data Operator = Add
               | Sub

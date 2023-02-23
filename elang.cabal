@@ -29,6 +29,7 @@ library
       ELang.Eval
       ELang.Expr
       ELang.Parser
+      ELang.PredicateStack
       ELang.Prelude
       ELang.Token
       ELang.Tokenizer

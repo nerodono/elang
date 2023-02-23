@@ -15,6 +15,7 @@ data EvalResult = IntResult Integer
                 deriving(Show, Eq)
 
 data Expr = Binary Expr Expr Operator
+          | ExprStringify Expr
           | BracketsExpr Expr
           | ExprIdent String
           | Unary Expr Operator

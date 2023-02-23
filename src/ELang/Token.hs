@@ -12,6 +12,7 @@ class Precedence obj where
 
 data Keyword = If
              | Else
+             | Stringify
              | Then
              | Let
              | In

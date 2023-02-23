@@ -18,6 +18,9 @@ eval _ (ExprLit lit) =
 eval ctx (BracketsExpr e) =
   eval ctx e
 
+eval ctx (ExprStringify e) =
+  StrResult $ show (eval ctx e)
+
 eval ctx (ExprIdent ident) =
   case findItemByName ctx ident of
     Just item ->

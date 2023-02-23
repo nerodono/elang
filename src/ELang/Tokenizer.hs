@@ -49,6 +49,7 @@ tokenize (c:sTail)
         "then"  -> Keyword Then
         "let"   -> Keyword Let
         "in"    -> Keyword In
+        "stringify" -> Keyword Stringify
 
         ident -> Ident ident
     postProcessIdent _ = undefined

@@ -35,6 +35,15 @@ parseTokens tokens =
 
             Keyword keyword ->
               case keyword of
+                Stringify ->
+                  case tokTail of
+                    (Bracket { isOpen = True } : argTail) ->
+                      let untilBracket = pushToTop stack isClosingBracket
+                          (argExpr, tail') = mapFst unwrapMaybe $ parse Nothing untilBracket argTail
+                          stringifyExpr = ExprStringify argExpr
+                      in
+                        parse (Just stringifyExpr) stack tail'
+                    _ -> error $ "Unexpected token, tail: " ++ show tokTail
                 If ->
                   let untilThenStack   = pushToTop stack (isKeyword Then)
                       untilElseStack   = pushToTop stack (isKeyword Else)
